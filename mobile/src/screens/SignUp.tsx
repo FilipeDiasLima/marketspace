@@ -70,6 +70,7 @@ export default function SignUp() {
   });
 
   const phoneField = watch("phone");
+  const nameField = watch("name");
 
   async function handleSignUp({ email, password, name, phone }: FormData) {
     setIsLoading(true);
@@ -129,7 +130,7 @@ export default function SignUp() {
       const fileExtension = photoSelected.assets[0].uri.split(".").pop();
 
       const photoFile = {
-        name: fileExtension?.toLowerCase(),
+        name: nameField || "",
         uri: photoSelected.assets[0].uri,
         type: `${photoSelected.assets[0].type}/${fileExtension}`,
       } as any;

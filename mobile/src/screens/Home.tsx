@@ -1,6 +1,12 @@
 import { Button } from "@components/Button";
+import { Input } from "@components/Input";
+import { ProductCard } from "@components/ProductCard";
+import { TitleBox } from "@components/TitleBox";
 import { Welcome } from "@components/Welcome";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { ProductDTO } from "@dtos/Product";
+import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import { api } from "@service/api";
+import AppError from "@utils/AppError";
 import {
   Box,
   HStack,
@@ -8,39 +14,151 @@ import {
   Text,
   VStack,
   Button as NativeBaseButton,
+  Divider,
+  useToast,
+  FlatList,
+  Image,
+  SimpleGrid,
+  ScrollView,
 } from "native-base";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const toast = useToast();
+
+  const [isLoadingAds, setIsLoadingAds] = useState(false);
+  const [adsList, setAdsList] = useState<ProductDTO[]>([]);
+
+  const fetchAds = async () => {
+    try {
+      const { data } = await api.get("/products");
+      setAdsList(data);
+    } catch (error) {
+      console.log(error);
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError;
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    } finally {
+    }
+  };
+
+  console.log(adsList);
+
+  useEffect(() => {
+    fetchAds();
+  }, []);
+
   return (
-    <VStack px={6} pt={6} pb={10}>
-      <HStack>
-        <Welcome />
-        <Button
-          title="Criar anúncio"
-          py={2}
-          maxW={170}
-          fontSize="md"
-          bg="gray.100"
-          size="md"
-          leftIcon={<Icon as={<Ionicons name="add" />} size="lg" />}
-          _pressed={{
-            bg: "gray.200",
-          }}
-        />
-      </HStack>
-      <Text fontSize="sm">Seus produtos anunciados para venda</Text>
-      <Box>
-        <Icon as={<AntDesign name="tagso" />} size="xl" />
-        <VStack>
-          <Text>4</Text>
-          <Text>anúncios ativos</Text>
-        </VStack>
-        <NativeBaseButton
-          rightIcon={<Icon as={<Ionicons name="arrow-redo-outline" />} />}
+    <ScrollView>
+      <VStack px={6} pt={8} pb={20}>
+        <HStack>
+          <Welcome />
+          <Button
+            title="Criar anúncio"
+            py={2}
+            maxW={170}
+            fontSize="md"
+            bg="gray.100"
+            size="md"
+            leftIcon={<Icon as={<Ionicons name="add" />} size="lg" />}
+            _pressed={{
+              bg: "gray.200",
+            }}
+          />
+        </HStack>
+
+        <TitleBox mt={10} title="Seus produtos anunciados para venda" />
+        <Box
+          flexDirection="row"
+          justifyContent="space-around"
+          alignItems="center"
+          bg="blue.card"
+          rounded="lg"
+          px={2}
+          py={4}
+          mt={2}
         >
-          Meus anúncios
-        </NativeBaseButton>
-      </Box>
-    </VStack>
+          <Icon as={<AntDesign name="tagso" />} size="xl" color="blue.100" />
+          <VStack>
+            <Text fontSize="lg" fontFamily="heading">
+              4
+            </Text>
+            <Text>anúncios ativos</Text>
+          </VStack>
+          <NativeBaseButton
+            variant="ghost"
+            _pressed={{
+              bg: "none",
+            }}
+            rightIcon={
+              <Icon
+                as={<Ionicons name="arrow-forward" />}
+                size="sm"
+                color="blue.100"
+              />
+            }
+          >
+            <Text color="blue.100" fontFamily="heading">
+              Meus anúncios
+            </Text>
+          </NativeBaseButton>
+        </Box>
+
+        <TitleBox mt={10} title="Compre produtos variados" />
+        <Box
+          flexDir="row"
+          mt={4}
+          alignItems="center"
+          bg="gray.700"
+          rounded="lg"
+          px={2}
+        >
+          <Box flex={1}>
+            <Input
+              placeholder="Buscar anúncio"
+              _focus={{
+                borderWidth: 0,
+                bg: "transparent",
+              }}
+            />
+          </Box>
+          <NativeBaseButton
+            variant="ghost"
+            p={2}
+            rounded="lg"
+            _pressed={{ bg: "blue.card" }}
+          >
+            <Icon as={<Feather name="search" />} color="gray.200" size="md" />
+          </NativeBaseButton>
+          <Divider
+            orientation="vertical"
+            bg="gray.400"
+            thickness={1}
+            mx={2}
+            h="50%"
+          />
+          <NativeBaseButton
+            variant="ghost"
+            p={2}
+            rounded="lg"
+            _pressed={{ bg: "blue.card" }}
+          >
+            <Icon as={<Feather name="sliders" />} color="gray.200" size="md" />
+          </NativeBaseButton>
+        </Box>
+
+        <SimpleGrid columns={2} w="100%" spacingX={6}>
+          {adsList.map((item) => (
+            <ProductCard key={item.id} item={item} />
+          ))}
+        </SimpleGrid>
+      </VStack>
+    </ScrollView>
   );
 }

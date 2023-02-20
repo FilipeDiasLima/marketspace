@@ -3,8 +3,9 @@ import { extendTheme } from "native-base";
 export const Theme = extendTheme({
   colors: {
     blue: {
-      "": "#364D9D",
+      100: "#364D9D",
       light: "#647AC7",
+      card: "#6479c72f",
     },
     red: {
       light: "#EE7979",
