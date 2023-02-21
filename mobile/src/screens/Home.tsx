@@ -1,30 +1,33 @@
 import { Button } from "@components/Button";
+import { Filter } from "@components/Filter";
 import { Input } from "@components/Input";
 import { ProductCard } from "@components/ProductCard";
 import { TitleBox } from "@components/TitleBox";
 import { Welcome } from "@components/Welcome";
 import { ProductDTO } from "@dtos/Product";
-import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { api } from "@service/api";
 import AppError from "@utils/AppError";
 import {
   Box,
-  HStack,
-  Icon,
-  Text,
-  VStack,
   Button as NativeBaseButton,
   Divider,
-  useToast,
-  FlatList,
-  Image,
-  SimpleGrid,
+  HStack,
+  Icon,
   ScrollView,
+  SimpleGrid,
+  Text,
+  useToast,
+  VStack,
+  Actionsheet,
+  useDisclose,
+  Pressable,
 } from "native-base";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclose();
 
   const [isLoadingAds, setIsLoadingAds] = useState(false);
   const [adsList, setAdsList] = useState<ProductDTO[]>([]);
@@ -34,7 +37,6 @@ export default function Home() {
       const { data } = await api.get("/products");
       setAdsList(data);
     } catch (error) {
-      console.log(error);
       const isAppError = error instanceof AppError;
 
       const title = isAppError;
@@ -47,8 +49,6 @@ export default function Home() {
     } finally {
     }
   };
-
-  console.log(adsList);
 
   useEffect(() => {
     fetchAds();
@@ -148,17 +148,19 @@ export default function Home() {
             p={2}
             rounded="lg"
             _pressed={{ bg: "blue.card" }}
+            onPress={onOpen}
           >
             <Icon as={<Feather name="sliders" />} color="gray.200" size="md" />
           </NativeBaseButton>
         </Box>
 
-        <SimpleGrid columns={2} w="100%" spacingX={6}>
+        <SimpleGrid columns={2} w="100%" spacingX={5}>
           {adsList.map((item) => (
             <ProductCard key={item.id} item={item} />
           ))}
         </SimpleGrid>
       </VStack>
+      <Filter isOpen={isOpen} onClose={onClose} />
     </ScrollView>
   );
 }

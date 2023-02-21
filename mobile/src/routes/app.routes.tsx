@@ -5,6 +5,7 @@ import {
   BottomTabNavigationProp,
 } from "@react-navigation/bottom-tabs";
 import Home from "@screens/Home";
+import Logout from "@screens/Logout";
 import MyAds from "@screens/MyAds";
 import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
@@ -14,6 +15,7 @@ type AppRoutes = {
   home: undefined;
   myAds: undefined;
   profile: undefined;
+  logout: undefined;
 };
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -65,11 +67,16 @@ export function AppRoutes() {
         component={Profile}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="person-circle-outline"
-              color={color}
-              size={iconSize}
-            />
+            <Ionicons name="person-outline" color={color} size={iconSize} />
+          ),
+        }}
+      />
+      <Screen
+        name="logout"
+        component={Logout}
+        options={{
+          tabBarIcon: () => (
+            <Ionicons name="exit-outline" color="#EE7979" size={iconSize} />
           ),
         }}
       />
