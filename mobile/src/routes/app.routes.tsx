@@ -6,16 +6,18 @@ import {
 } from "@react-navigation/bottom-tabs";
 import Home from "@screens/Home";
 import Logout from "@screens/Logout";
-import MyAds from "@screens/MyAds";
+import MyProducts from "@screens/MyProducts";
+import ProductDetails from "@screens/ProductDetails";
 import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
 import { Platform } from "react-native";
 
 type AppRoutes = {
   home: undefined;
-  myAds: undefined;
+  myProducts: undefined;
   profile: undefined;
   logout: undefined;
+  productDetails: { productId: string };
 };
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -54,8 +56,8 @@ export function AppRoutes() {
         }}
       />
       <Screen
-        name="myAds"
-        component={MyAds}
+        name="myProducts"
+        component={MyProducts}
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="tagso" color={color} size={iconSize} />
@@ -79,6 +81,11 @@ export function AppRoutes() {
             <Ionicons name="exit-outline" color="#EE7979" size={iconSize} />
           ),
         }}
+      />
+      <Screen
+        name="productDetails"
+        component={ProductDetails}
+        options={{ tabBarButton: () => null }}
       />
     </Navigator>
   );

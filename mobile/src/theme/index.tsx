@@ -33,7 +33,4 @@ export const Theme = extendTheme({
     "2xl": 28,
   },
   lineHeights: "130%",
-  config: {
-    initialColorMode: "light",
-  },
 });

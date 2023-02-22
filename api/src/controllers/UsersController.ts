@@ -31,9 +31,7 @@ export class UsersController {
 
   async create(request: Request, response: Response, next: NextFunction) {
     const { name, email, password, tel } = request.body;
-    console.log(name, email, password, tel);
     const avatarFile = request.file;
-    console.log(request.file);
     const diskStorage = new DiskStorage();
 
     if (!avatarFile) {

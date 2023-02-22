@@ -2,6 +2,7 @@ export interface ProductDTO {
   id: string;
   name: string;
   price: number;
+  description: string;
   is_new: boolean;
   accept_trade: boolean;
   product_images: [
@@ -18,5 +19,7 @@ export interface ProductDTO {
   ];
   user: {
     avatar: string;
+    name: string;
+    tel: string;
   };
 }

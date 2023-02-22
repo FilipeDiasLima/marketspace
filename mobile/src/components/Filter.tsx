@@ -40,8 +40,6 @@ export const Filter = ({ isOpen, onClose }: Props) => {
     setAcceptDeposit(false);
   }
 
-  console.log(acceptBoleto);
-
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
       <Actionsheet.Content px={8} pt={4} pb={10}>

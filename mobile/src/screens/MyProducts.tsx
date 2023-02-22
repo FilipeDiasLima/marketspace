@@ -1,9 +1,9 @@
 import { Text, VStack } from "native-base";
 
-export default function MyAds() {
+export default function MyProducts() {
   return (
     <VStack>
-      <Text>MyAds</Text>
+      <Text>MyProducts</Text>
     </VStack>
   );
 }
