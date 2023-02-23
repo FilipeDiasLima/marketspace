@@ -6,6 +6,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { api } from "@service/api";
 import AppError from "@utils/AppError";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 import {
   Avatar,
   Box,
@@ -43,8 +45,8 @@ const iconName = (type: string) => {
   }
 };
 
-const SLIDER_WIDTH = Dimensions.get("window").width + 80;
-const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
+const SLIDER_WIDTH = Dimensions.get("window").width + 20;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
 
 export default function ProductDetails() {
   const navigation = useNavigation();
@@ -52,6 +54,7 @@ export default function ProductDetails() {
   const toast = useToast();
 
   const isCarousel = useRef(null);
+  const [slideIndex, setSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [productData, setProductData] = useState<ProductDTO>({} as ProductDTO);
 
@@ -101,7 +104,7 @@ export default function ProductDetails() {
           </TouchableOpacity>
         </Box>
 
-        <Box mt={4}>
+        <Box mt={4} position="relative">
           <Carousel
             layout="default"
             vertical={false}
@@ -111,40 +114,53 @@ export default function ProductDetails() {
             inactiveSlideShift={0}
             useScrollView={true}
             ref={isCarousel}
+            onSnapToItem={(index) => setSlideIndex(index)}
             data={productData.product_images}
-            renderItem={() => (
+            renderItem={(item, index) => (
               <Image
                 source={
                   productData.product_images
                     ? {
-                        uri: `${process.env.API_URL}/images/${productData.product_images[0]?.path}`,
+                        uri: `${process.env.API_URL}/images/${
+                          productData.product_images[item.index]?.path
+                        }`,
                       }
                     : NoImageProduct
                 }
                 alt={productData.name}
-                h={290}
+                h={300}
                 w="100%"
               />
             )}
           />
           <Pagination
-            dotsLength={productData.product_images.length}
-            activeDotIndex={0}
-            containerStyle={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
-            dotStyle={{
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              marginHorizontal: 8,
-              backgroundColor: "rgba(255, 255, 255, 0.92)",
+            containerStyle={{
+              position: "absolute",
+              bottom: -20,
+              left: 0,
+              right: 0,
+              padding: 10,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
-            inactiveDotStyle={
-              {
-                // Define styles for inactive dots here
-              }
+            dotsLength={productData.product_images.length}
+            activeDotIndex={slideIndex}
+            inactiveDotOpacity={0.7}
+            inactiveDotScale={1}
+            // @ts-ignore
+            renderDots={(activeIndex) =>
+              productData.product_images.map((item, index) => (
+                <Box
+                  key={item.id}
+                  bg="gray.700"
+                  opacity={activeIndex === index ? 1 : 0.7}
+                  flex={0.49}
+                  h={1}
+                  rounded="full"
+                />
+              ))
             }
-            inactiveDotOpacity={0.4}
-            inactiveDotScale={0.6}
           />
         </Box>
 

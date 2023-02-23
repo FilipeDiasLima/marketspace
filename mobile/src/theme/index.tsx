@@ -32,5 +32,5 @@ export const Theme = extendTheme({
     xl: 24,
     "2xl": 28,
   },
-  lineHeights: "130%",
+  // lineHeights: "130%",
 });

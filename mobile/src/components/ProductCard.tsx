@@ -9,14 +9,19 @@ import {
   Pressable,
   Text,
 } from "native-base";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 
 import NoImageProduct from "@assets/no-product-image.png";
 import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { BadgeStatus } from "./BadgeStatus";
+import { Dimensions } from "react-native";
 
 type Props = {
   item: ProductDTO;
 };
+
+const WIDTH = Dimensions.get("window").width + 20;
 
 export const ProductCard = ({ item }: Props) => {
   const navigation = useNavigation<AppNavigationRoutesProps>();
@@ -25,10 +30,12 @@ export const ProductCard = ({ item }: Props) => {
     navigation.navigate("productDetails", { productId: id });
   }
 
+  console.log(WIDTH);
+
   return (
     <Pressable onPress={() => handleOpenProductDetails(item.id)}>
       <Box flexDir="column" mt={8}>
-        <Box>
+        <Box position="relative">
           <HStack
             position="absolute"
             zIndex={1}
@@ -51,7 +58,7 @@ export const ProductCard = ({ item }: Props) => {
             <BadgeStatus isNew={item.is_new} />
           </HStack>
           <Image
-            w={180}
+            w={WIDTH <= 412 ? 180 : 160}
             h={120}
             rounded="lg"
             source={
