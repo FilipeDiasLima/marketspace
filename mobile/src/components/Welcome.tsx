@@ -3,6 +3,7 @@ import { Avatar, HStack, Text, VStack } from "native-base";
 
 export const Welcome = () => {
   const { user } = useAuth();
+  console.log(process.env.API_URL);
   console.log(`${process.env.API_URL}/images/${user.avatar}`);
   return (
     <HStack alignItems="center" flex={1}>

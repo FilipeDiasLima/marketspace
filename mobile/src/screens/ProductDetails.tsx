@@ -90,7 +90,7 @@ export default function ProductDetails() {
   }, [productId]);
 
   if (isLoading) {
-    <Loading />;
+    return <Loading />;
   } else {
     return (
       <ScrollView>

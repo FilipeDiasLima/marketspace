@@ -4,6 +4,10 @@ import {
   createBottomTabNavigator,
   BottomTabNavigationProp,
 } from "@react-navigation/bottom-tabs";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import Home from "@screens/Home";
 import Logout from "@screens/Logout";
 import MyProducts from "@screens/MyProducts";
@@ -12,25 +16,31 @@ import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
 import { Platform } from "react-native";
 
-type AppRoutes = {
+type TabRoutes = {
   home: undefined;
   myProducts: undefined;
   profile: undefined;
   logout: undefined;
+};
+
+type AppRoutes = {
+  home: undefined;
   productDetails: { productId: string };
 };
 
-export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
+export type AppTabNavigationRoutesProps = BottomTabNavigationProp<TabRoutes>;
+export type AppStackNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
 
-const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
+const Tab = createBottomTabNavigator<TabRoutes>();
+const Stack = createNativeStackNavigator<AppRoutes>();
 
-export function AppRoutes() {
+function AppTabs() {
   const { sizes, colors } = useTheme();
 
   const iconSize = sizes[7];
 
   return (
-    <Navigator
+    <Tab.Navigator
       backBehavior="history"
       screenOptions={{
         headerShown: false,
@@ -46,7 +56,7 @@ export function AppRoutes() {
         },
       }}
     >
-      <Screen
+      <Tab.Screen
         name="home"
         component={Home}
         options={{
@@ -55,7 +65,7 @@ export function AppRoutes() {
           ),
         }}
       />
-      <Screen
+      <Tab.Screen
         name="myProducts"
         component={MyProducts}
         options={{
@@ -64,7 +74,7 @@ export function AppRoutes() {
           ),
         }}
       />
-      <Screen
+      <Tab.Screen
         name="profile"
         component={Profile}
         options={{
@@ -73,7 +83,7 @@ export function AppRoutes() {
           ),
         }}
       />
-      <Screen
+      <Tab.Screen
         name="logout"
         component={Logout}
         options={{
@@ -82,11 +92,15 @@ export function AppRoutes() {
           ),
         }}
       />
-      <Screen
-        name="productDetails"
-        component={ProductDetails}
-        options={{ tabBarButton: () => null }}
-      />
-    </Navigator>
+    </Tab.Navigator>
+  );
+}
+
+export function AppRoutes() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="home" component={AppTabs} />
+      <Stack.Screen name="productDetails" component={ProductDetails} />
+    </Stack.Navigator>
   );
 }
