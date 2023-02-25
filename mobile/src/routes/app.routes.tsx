@@ -11,6 +11,7 @@ import {
 import Home from "@screens/Home";
 import Logout from "@screens/Logout";
 import MyProducts from "@screens/MyProducts";
+import NewProduct from "@screens/NewProduct";
 import ProductDetails from "@screens/ProductDetails";
 import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
@@ -26,10 +27,12 @@ type TabRoutes = {
 type AppRoutes = {
   home: undefined;
   productDetails: { productId: string };
+  newProduct: undefined;
 };
 
 export type AppTabNavigationRoutesProps = BottomTabNavigationProp<TabRoutes>;
-export type AppStackNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
+export type AppStackNavigationRoutesProps =
+  NativeStackNavigationProp<AppRoutes>;
 
 const Tab = createBottomTabNavigator<TabRoutes>();
 const Stack = createNativeStackNavigator<AppRoutes>();
@@ -41,6 +44,7 @@ function AppTabs() {
 
   return (
     <Tab.Navigator
+      initialRouteName="home"
       backBehavior="history"
       screenOptions={{
         headerShown: false,
@@ -50,9 +54,9 @@ function AppTabs() {
         tabBarStyle: {
           backgroundColor: colors.gray[700],
           borderTopWidth: 0,
-          height: Platform.OS === "android" ? "auto" : 100,
-          paddingBottom: sizes[10],
-          paddingTop: sizes[6],
+          height: Platform.OS === "android" ? 70 : 100,
+          paddingBottom: Platform.OS === "android" ? sizes[4] : sizes[10],
+          paddingTop: Platform.OS === "android" ? sizes[4] : sizes[6],
         },
       }}
     >
@@ -101,6 +105,7 @@ export function AppRoutes() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" component={AppTabs} />
       <Stack.Screen name="productDetails" component={ProductDetails} />
+      <Stack.Screen name="newProduct" component={NewProduct} />
     </Stack.Navigator>
   );
 }

@@ -6,6 +6,8 @@ import { TitleBox } from "@components/TitleBox";
 import { Welcome } from "@components/Welcome";
 import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { api } from "@service/api";
 import AppError from "@utils/AppError";
 import {
@@ -25,6 +27,8 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const toast = useToast();
+  const navigationStack = useNavigation<AppStackNavigationRoutesProps>();
+
   const { isOpen, onOpen, onClose } = useDisclose();
 
   const [isLoadingAds, setIsLoadingAds] = useState(false);
@@ -68,6 +72,7 @@ export default function Home() {
             _pressed={{
               bg: "gray.200",
             }}
+            onPress={() => navigationStack.navigate("newProduct")}
           />
         </HStack>
 

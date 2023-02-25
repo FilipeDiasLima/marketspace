@@ -47,13 +47,13 @@ export const Filter = ({ isOpen, onClose }: Props) => {
           <Text color="gray.100" fontFamily="heading" fontSize="lg">
             Filtrar anúncios
           </Text>
-          <Pressable>
+          <Pressable onPress={onClose}>
             <Icon as={<AntDesign name="close" />} color="gray.400" size={6} />
           </Pressable>
         </HStack>
 
-        <Box w="100%" alignItems="flex-start" mt={8}>
-          <Text fontFamily="heading" fontSize="md" mb={4}>
+        <Box w="100%" alignItems="flex-start" mt={6}>
+          <Text fontFamily="heading" fontSize="md" mb={2}>
             Condiçao
           </Text>
           <HStack space={2}>
@@ -68,7 +68,6 @@ export const Filter = ({ isOpen, onClose }: Props) => {
               rightIcon={
                 newProductFilter ? (
                   <Icon
-                    alignSelf="flex-end"
                     as={<AntDesign name="closecircle" />}
                     color="white"
                     size="sm"
@@ -96,7 +95,6 @@ export const Filter = ({ isOpen, onClose }: Props) => {
               rightIcon={
                 usedProductFilter ? (
                   <Icon
-                    alignSelf="flex-end"
                     as={<AntDesign name="closecircle" />}
                     color="white"
                     size="sm"
@@ -116,8 +114,8 @@ export const Filter = ({ isOpen, onClose }: Props) => {
           </HStack>
         </Box>
 
-        <Box w="100%" alignItems="flex-start" mt={8}>
-          <Text fontFamily="heading" fontSize="md" mb={4}>
+        <Box w="100%" alignItems="flex-start" mt={6}>
+          <Text fontFamily="heading" fontSize="md" mb={2}>
             Aceita troca?
           </Text>
           <Switch
@@ -130,13 +128,13 @@ export const Filter = ({ isOpen, onClose }: Props) => {
           />
         </Box>
 
-        <Box w="100%" alignItems="flex-start" mt={8}>
-          <Text fontFamily="heading" fontSize="md" mb={4}>
+        <Box w="100%" alignItems="flex-start" mt={4}>
+          <Text fontFamily="heading" fontSize="md" mb={2}>
             Meios de pagamento aceitos
           </Text>
           <Checkbox
-            my={2}
-            size="md"
+            my={1}
+            size="sm"
             isChecked={acceptBoleto}
             onChange={() => setAcceptBoleto(!acceptBoleto)}
             value="boleto"
@@ -152,8 +150,8 @@ export const Filter = ({ isOpen, onClose }: Props) => {
             Boleto
           </Checkbox>
           <Checkbox
-            my={2}
-            size="md"
+            my={1}
+            size="sm"
             value="pix"
             isChecked={acceptPix}
             onChange={() => setAcceptPix(!acceptPix)}
@@ -169,8 +167,8 @@ export const Filter = ({ isOpen, onClose }: Props) => {
             Pix
           </Checkbox>
           <Checkbox
-            my={2}
-            size="md"
+            my={1}
+            size="sm"
             value="cash"
             isChecked={acceptCash}
             onChange={() => setAcceptCash(!acceptCash)}
@@ -186,8 +184,8 @@ export const Filter = ({ isOpen, onClose }: Props) => {
             Dinheiro
           </Checkbox>
           <Checkbox
-            my={2}
-            size="md"
+            my={1}
+            size="sm"
             value="card"
             isChecked={acceptCard}
             onChange={() => setAcceptCard(!acceptCard)}
@@ -203,8 +201,8 @@ export const Filter = ({ isOpen, onClose }: Props) => {
             Cartão de Crédito
           </Checkbox>
           <Checkbox
-            my={2}
-            size="md"
+            my={1}
+            size="sm"
             value="deposit"
             isChecked={acceptDeposit}
             onChange={() => setAcceptDeposit(!acceptDeposit)}

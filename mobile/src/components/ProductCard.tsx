@@ -13,7 +13,7 @@ import "intl";
 import "intl/locale-data/jsonp/pt-BR";
 
 import NoImageProduct from "@assets/no-product-image.png";
-import { AppTabNavigationRoutesProps } from "@routes/app.routes";
+import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { BadgeStatus } from "./BadgeStatus";
 import { Dimensions } from "react-native";
 
@@ -24,7 +24,7 @@ type Props = {
 const WIDTH = Dimensions.get("window").width + 20;
 
 export const ProductCard = ({ item }: Props) => {
-  const navigation = useNavigation<AppTabNavigationRoutesProps>();
+  const navigation = useNavigation<AppStackNavigationRoutesProps>();
 
   function handleOpenProductDetails(id: string) {
     navigation.navigate("productDetails", { productId: id });
@@ -59,7 +59,7 @@ export const ProductCard = ({ item }: Props) => {
             <BadgeStatus isNew={item.is_new} />
           </HStack>
           <Image
-            w={WIDTH <= 412 ? 160 : 180}
+            w={WIDTH <= 425 ? 160 : 180}
             h={120}
             rounded="lg"
             source={
