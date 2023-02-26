@@ -9,6 +9,7 @@ import { Loading } from "@components/Loading";
 import { Routes } from "./src/routes";
 import { Theme } from "./src/theme";
 import { AuthContextProvider } from "@context/AuthContext";
+import "react-native-gesture-handler";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });

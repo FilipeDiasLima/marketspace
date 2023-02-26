@@ -1,8 +1,9 @@
-import NoImageProduct from "@assets/no-product-image.png";
 import { BadgeStatus } from "@components/BadgeStatus";
 import { BottomBox } from "@components/BottomBox";
 import { Button } from "@components/Button";
 import { Loading } from "@components/Loading";
+import { PaymentMethodsIcon } from "@components/PaymentMethodsIcon";
+import { ProductImagesCarousel } from "@components/ProductImagesCarousel";
 import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -24,39 +25,16 @@ import {
 } from "native-base";
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, TouchableOpacity } from "react-native";
-import Carousel, { Pagination } from "react-native-snap-carousel";
 
 type RouteParams = {
   productId: string;
 };
-
-const iconName = (type: string) => {
-  switch (type) {
-    case "card":
-      return "card-outline";
-    case "deposit":
-      return "briefcase-outline";
-    case "cash":
-      return "cash-outline";
-    case "pix":
-      return "qr-code-outline";
-    case "boleto":
-      return "barcode-outline";
-    default:
-      break;
-  }
-};
-
-const SLIDER_WIDTH = Dimensions.get("window").width + 20;
-const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
 
 export default function ProductDetails() {
   const navigation = useNavigation();
   const route = useRoute();
   const toast = useToast();
 
-  const isCarousel = useRef(null);
-  const [slideIndex, setSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [productData, setProductData] = useState<ProductDTO>({} as ProductDTO);
 
@@ -103,63 +81,10 @@ export default function ProductDetails() {
             </TouchableOpacity>
           </Box>
 
-          <Box mt={4} position="relative">
-            <Carousel
-              layout="default"
-              vertical={false}
-              itemWidth={ITEM_WIDTH}
-              sliderWidth={SLIDER_WIDTH}
-              layoutCardOffset={9}
-              inactiveSlideShift={0}
-              useScrollView={true}
-              ref={isCarousel}
-              onSnapToItem={(index) => setSlideIndex(index)}
-              data={productData.product_images}
-              renderItem={(item, index) => (
-                <Image
-                  source={
-                    productData.product_images
-                      ? {
-                          uri: `${process.env.API_URL}/images/${
-                            productData.product_images[item.index]?.path
-                          }`,
-                        }
-                      : NoImageProduct
-                  }
-                  alt={productData.name}
-                  h={300}
-                  w="100%"
-                />
-              )}
-            />
-            <Pagination
-              containerStyle={{
-                position: "absolute",
-                bottom: -20,
-                left: 0,
-                right: 0,
-                padding: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-              dotsLength={productData.product_images.length}
-              activeDotIndex={slideIndex}
-              inactiveDotOpacity={0.7}
-              inactiveDotScale={1}
-              // @ts-ignore
-              renderDots={(activeIndex) =>
-                productData.product_images.map((item, index) => (
-                  <Box
-                    key={item.id}
-                    bg="gray.700"
-                    opacity={activeIndex === index ? 1 : 0.7}
-                    flex={0.49}
-                    h={1}
-                    rounded="full"
-                  />
-                ))
-              }
+          <Box mt={4}>
+            <ProductImagesCarousel
+              name={productData.name}
+              product_images={productData.product_images}
             />
           </Box>
 
@@ -215,14 +140,11 @@ export default function ProductDetails() {
                 Meios de pagamento:
               </Text>
               {productData.payment_methods.map((item) => (
-                <HStack key={item.key} space={1} mt={1}>
-                  <Icon
-                    as={<Ionicons name={iconName(item.key)} />}
-                    color="gray.200"
-                    size="sm"
-                  />
-                  <Text color="gray.200">{item.name}</Text>
-                </HStack>
+                <PaymentMethodsIcon
+                  key={item.key}
+                  id={item.key}
+                  name={item.name}
+                />
               ))}
             </VStack>
           </VStack>

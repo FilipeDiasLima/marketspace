@@ -12,7 +12,9 @@ import {
   Checkbox,
 } from "native-base";
 import { useState } from "react";
+import { AcceptTradeBox } from "./AcceptTradeBox";
 import { Button } from "./Button";
+import { PaymentMethodsCheckbox } from "./PaymentMethodsCheckbox";
 
 type Props = {
   isOpen: boolean;
@@ -22,22 +24,10 @@ type Props = {
 export const Filter = ({ isOpen, onClose }: Props) => {
   const [newProductFilter, setNewProductFilter] = useState(false);
   const [usedProductFilter, setUsedProductFilter] = useState(false);
-  const [acceptTrade, setAcceptTrade] = useState(false);
-  const [acceptBoleto, setAcceptBoleto] = useState(false);
-  const [acceptPix, setAcceptPix] = useState(false);
-  const [acceptCash, setAcceptCash] = useState(false);
-  const [acceptCard, setAcceptCard] = useState(false);
-  const [acceptDeposit, setAcceptDeposit] = useState(false);
 
   function resetFilters() {
     setNewProductFilter(false);
     setUsedProductFilter(false);
-    setAcceptTrade(false);
-    setAcceptBoleto(false);
-    setAcceptPix(false);
-    setAcceptCash(false);
-    setAcceptCard(false);
-    setAcceptDeposit(false);
   }
 
   return (
@@ -114,110 +104,9 @@ export const Filter = ({ isOpen, onClose }: Props) => {
           </HStack>
         </Box>
 
-        <Box w="100%" alignItems="flex-start" mt={6}>
-          <Text fontFamily="heading" fontSize="md" mb={2}>
-            Aceita troca?
-          </Text>
-          <Switch
-            offTrackColor="gray.500"
-            onTrackColor="blue.light"
-            onThumbColor="gray.700"
-            offThumbColor="gray.700"
-            value={acceptTrade}
-            onValueChange={(e) => setAcceptTrade(e)}
-          />
-        </Box>
+        <AcceptTradeBox mt={6} />
 
-        <Box w="100%" alignItems="flex-start" mt={4}>
-          <Text fontFamily="heading" fontSize="md" mb={2}>
-            Meios de pagamento aceitos
-          </Text>
-          <Checkbox
-            my={1}
-            size="sm"
-            isChecked={acceptBoleto}
-            onChange={() => setAcceptBoleto(!acceptBoleto)}
-            value="boleto"
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            Boleto
-          </Checkbox>
-          <Checkbox
-            my={1}
-            size="sm"
-            value="pix"
-            isChecked={acceptPix}
-            onChange={() => setAcceptPix(!acceptPix)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            Pix
-          </Checkbox>
-          <Checkbox
-            my={1}
-            size="sm"
-            value="cash"
-            isChecked={acceptCash}
-            onChange={() => setAcceptCash(!acceptCash)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            Dinheiro
-          </Checkbox>
-          <Checkbox
-            my={1}
-            size="sm"
-            value="card"
-            isChecked={acceptCard}
-            onChange={() => setAcceptCard(!acceptCard)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            Cartão de Crédito
-          </Checkbox>
-          <Checkbox
-            my={1}
-            size="sm"
-            value="deposit"
-            isChecked={acceptDeposit}
-            onChange={() => setAcceptDeposit(!acceptDeposit)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            Depósito Bancário
-          </Checkbox>
-        </Box>
+        <PaymentMethodsCheckbox mt={6} />
 
         <Box w="100%" alignItems="flex-start" mt={12} mb={2}>
           <HStack space={6}>
