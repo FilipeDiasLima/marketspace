@@ -23,7 +23,7 @@ type Props = {
 
 const WIDTH = Dimensions.get("window").width + 20;
 
-export const ProductCard = ({ item }: Props) => {
+export const MyProductCard = ({ item }: Props) => {
   const navigation = useNavigation<AppStackNavigationRoutesProps>();
 
   function handleOpenProductDetails(id: string) {
@@ -36,27 +36,36 @@ export const ProductCard = ({ item }: Props) => {
     <Pressable onPress={() => handleOpenProductDetails(item.id)}>
       <Box flexDir="column" mt={8}>
         <Box position="relative">
-          <HStack
+          {!item.is_active && (
+            <>
+              <Box
+                position="absolute"
+                zIndex={2}
+                w={WIDTH <= 425 ? 160 : 180}
+                h={120}
+                bg="gray.100"
+                rounded="lg"
+                opacity={0.5}
+              />
+              <Text
+                position="absolute"
+                zIndex={3}
+                bottom={2}
+                left={2}
+                fontSize="sm"
+                color="white"
+              >
+                ANÚNCIO DESATIVADO
+              </Text>
+            </>
+          )}
+          <BadgeStatus
+            isNew={item.is_new}
             position="absolute"
             zIndex={1}
-            p={2}
-            justifyContent="space-between"
-            w="100%"
-          >
-            <Avatar
-              size="sm"
-              borderWidth={1}
-              borderColor="gray.700"
-              source={
-                item.product_images[0]
-                  ? {
-                      uri: `${process.env.API_URL}/images/${item.user.avatar}`,
-                    }
-                  : NoImageProduct
-              }
-            />
-            <BadgeStatus isNew={item.is_new} />
-          </HStack>
+            top={2}
+            right={2}
+          />
           <Image
             w={WIDTH <= 425 ? 160 : 180}
             h={120}
@@ -71,15 +80,17 @@ export const ProductCard = ({ item }: Props) => {
             alt={item.name}
           />
         </Box>
-        <Text mt={1} fontSize="md" numberOfLines={1} maxW={180}>
-          {item.name}
-        </Text>
-        <Text mt={1} fontSize="lg" fontFamily="heading">
-          {new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }).format(item.price! / 100)}
-        </Text>
+        <Box opacity={item.is_active ? 1 : 0.5}>
+          <Text mt={1} fontSize="md" numberOfLines={1} maxW={180}>
+            {item.name}
+          </Text>
+          <Text mt={1} fontSize="lg" fontFamily="heading">
+            {new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(item.price! / 100)}
+          </Text>
+        </Box>
       </Box>
     </Pressable>
   );

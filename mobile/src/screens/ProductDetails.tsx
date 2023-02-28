@@ -44,7 +44,7 @@ export default function ProductDetails() {
     setIsLoading(true);
     try {
       const { data } = await api.get(`/products/${productId}`);
-      console.log(data);
+
       setProductData(data);
     } catch (error) {
       const isAppError = error instanceof AppError;

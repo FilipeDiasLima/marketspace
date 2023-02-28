@@ -5,6 +5,7 @@ export interface ProductDTO {
   description: string;
   is_new: boolean;
   accept_trade: boolean;
+  is_active?: boolean;
   product_images: [
     {
       path: string;

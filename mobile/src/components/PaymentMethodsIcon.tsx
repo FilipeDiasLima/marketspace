@@ -24,7 +24,6 @@ type Props = {
 };
 
 export const PaymentMethodsIcon = ({ id, name }: Props) => {
-  console.log(id, name);
   return (
     <HStack key={id} space={1} mt={1}>
       <Icon as={<Ionicons name={iconName(id)} />} color="gray.200" size="sm" />
