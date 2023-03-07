@@ -37,6 +37,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post("/sessions", { email, password });
+      console.log("🚀 ~ file: AuthContext.tsx:40 ~ signIn ~ data", data);
       if (data.user && data.token) {
         await storageUserSave(data.user);
         await storageAuthTokenSave(data.token);

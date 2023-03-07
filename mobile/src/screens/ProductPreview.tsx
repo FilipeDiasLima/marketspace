@@ -2,6 +2,7 @@ import { BadgeStatus } from "@components/BadgeStatus";
 import { BottomBox } from "@components/BottomBox";
 import { Button } from "@components/Button";
 import { Loading } from "@components/Loading";
+import { NewProductImagesCarousel } from "@components/NewProductImagesCarousel";
 import { PaymentMethodsIcon } from "@components/PaymentMethodsIcon";
 import { ProductImagesCarousel } from "@components/ProductImagesCarousel";
 import { ProductDTO } from "@dtos/Product";
@@ -27,43 +28,36 @@ import { useEffect, useRef, useState } from "react";
 import { Dimensions, TouchableOpacity } from "react-native";
 
 type RouteParams = {
-  productId: string;
+  product: string;
 };
 
-export default function ProductDetails() {
+type NewProductDTO = {
+  name: string;
+  description: string;
+  price: number;
+  is_new: boolean;
+  accept_trade: boolean;
+  payment_methods: string[];
+  product_images: any[];
+  user: {
+    avatar: string;
+    name: string;
+    tel: string;
+  };
+};
+
+export default function ProductPreview() {
   const navigation = useNavigation();
   const route = useRoute();
   const toast = useToast();
+  const { product } = route.params as RouteParams;
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [productData, setProductData] = useState<ProductDTO>({} as ProductDTO);
+  const [isLoading, setIsLoading] = useState(false);
+  const [productData, setProductData] = useState<NewProductDTO>(
+    JSON.parse(product)
+  );
 
-  const { productId } = route.params as RouteParams;
-
-  async function fetchProductDetails() {
-    setIsLoading(true);
-    try {
-      const { data } = await api.get(`/products/${productId}`);
-
-      setProductData(data);
-    } catch (error) {
-      const isAppError = error instanceof AppError;
-
-      const title = isAppError;
-
-      toast.show({
-        title,
-        placement: "top",
-        bgColor: "red.500",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchProductDetails();
-  }, [productId]);
+  console.log(JSON.parse(product));
 
   if (isLoading) {
     return <Loading />;
@@ -71,18 +65,17 @@ export default function ProductDetails() {
     return (
       <>
         <ScrollView>
-          <Box px={6} pt={16}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                as={<AntDesign name="arrowleft" />}
-                size="lg"
-                color="gray.100"
-              />
-            </TouchableOpacity>
+          <Box px={6} pt={16} pb={4} bg="blue.light" alignItems="center">
+            <Text color="gray.700" fontSize="lg" fontFamily="heading">
+              Pré visualização do anúncio
+            </Text>
+            <Text color="gray.700" fontSize="md">
+              É assim que seu produto vai aparecer!
+            </Text>
           </Box>
 
-          <Box mt={4}>
-            <ProductImagesCarousel
+          <Box>
+            <NewProductImagesCarousel
               name={productData.name}
               product_images={productData.product_images}
             />
@@ -140,34 +133,40 @@ export default function ProductDetails() {
                 Meios de pagamento:
               </Text>
               {productData.payment_methods.map((item) => (
-                <PaymentMethodsIcon
-                  key={item.key}
-                  id={item.key}
-                  name={item.name}
-                />
+                <PaymentMethodsIcon key={item} id={item} name={item} />
               ))}
             </VStack>
           </VStack>
         </ScrollView>
         <BottomBox>
-          <Text
-            fontFamily="heading"
-            fontSize="xl"
-            color="blue.100"
-            flex={1}
-            textAlign="left"
-          >
-            {new Intl.NumberFormat("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            }).format(productData.price! / 100)}
-          </Text>
           <Button
-            title="Entrar em contato"
-            bg="blue.light"
+            title="Voltar e editar"
+            bg="gray.500"
+            fontSize="md"
+            color="gray.200"
+            _pressed={{
+              bg: "gray.400",
+            }}
             leftIcon={
               <Icon
-                as={<Ionicons name="ios-logo-whatsapp" />}
+                as={<AntDesign name="arrowleft" />}
+                color="gray.200"
+                size="md"
+              />
+            }
+            flex={1}
+            onPress={() => navigation.goBack()}
+          />
+          <Button
+            title="Publicar"
+            bg="blue.light"
+            fontSize="md"
+            _pressed={{
+              bg: "blue.100",
+            }}
+            leftIcon={
+              <Icon
+                as={<AntDesign name="tagso" />}
                 color="gray.600"
                 size="md"
               />

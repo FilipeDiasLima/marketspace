@@ -13,6 +13,7 @@ import Logout from "@screens/Logout";
 import MyProducts from "@screens/MyProducts";
 import NewProduct from "@screens/NewProduct";
 import ProductDetails from "@screens/ProductDetails";
+import ProductPreview from "@screens/ProductPreview";
 import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
 import { Platform } from "react-native";
@@ -27,6 +28,7 @@ type TabRoutes = {
 type AppRoutes = {
   home: undefined;
   productDetails: { productId: string };
+  productPreview: { product: string };
   newProduct: undefined;
 };
 
@@ -106,6 +108,7 @@ export function AppRoutes() {
       <Stack.Screen name="home" component={AppTabs} />
       <Stack.Screen name="productDetails" component={ProductDetails} />
       <Stack.Screen name="newProduct" component={NewProduct} />
+      <Stack.Screen name="productPreview" component={ProductPreview} />
     </Stack.Navigator>
   );
 }

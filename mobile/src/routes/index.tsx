@@ -13,7 +13,7 @@ export const Routes = () => {
   theme.colors.text = colors.gray[200];
 
   return (
-    <Box flex={1} pt={10} bg="gray.600">
+    <Box flex={1} bg="gray.600">
       <NavigationContainer theme={theme}>
         {user.id ? <AppRoutes /> : <AuthRoutes />}
       </NavigationContainer>

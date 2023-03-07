@@ -6,8 +6,19 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    console.log(config);
+    // console.log(config);
     return config;
   },
   (error) => error
+);
+
+api.interceptors.response.use(
+  (success) => {
+    // console.log(success);
+    return success;
+  },
+  (error) => {
+    console.log(error);
+    return error;
+  }
 );

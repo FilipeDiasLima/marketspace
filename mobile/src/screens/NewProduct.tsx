@@ -2,8 +2,12 @@ import { BottomBox } from "@components/BottomBox";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { TextArea } from "@components/TextArea";
+import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "@hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
+import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -21,21 +25,51 @@ import {
   VStack,
 } from "native-base";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import * as yup from "yup";
+
+type FormData = {
+  name: string;
+  description: string;
+  price: string;
+};
+
+const productSchema = yup.object({
+  name: yup.string().required("Nome do produto obrigatório"),
+  description: yup.string().required("Descrição do produto obrigatória"),
+  price: yup.string().required("Preço do produto obrigatório"),
+});
 
 export default function NewProduct() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppStackNavigationRoutesProps>();
   const toast = useToast();
 
+  const { user } = useAuth();
+
   const [productImages, setProductImages] = useState<any[]>([]);
-  const [productStatus, setProductStatus] = useState("");
-  const [acceptTrade, setAcceptTrade] = useState(false);
-  const [acceptBoleto, setAcceptBoleto] = useState(false);
-  const [acceptPix, setAcceptPix] = useState(false);
-  const [acceptCash, setAcceptCash] = useState(false);
-  const [acceptCard, setAcceptCard] = useState(false);
-  const [acceptDeposit, setAcceptDeposit] = useState(false);
+  const [productStatus, setProductStatus] = useState("usado");
+  const [acceptTrade, setAcceptTrade] = useState(true);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([
+    "pix",
+    "cash",
+  ]);
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      description: "dciehwbciu wdiouch owid cldsn klcj hwljdncoiw dhco",
+      name: "Teclado Keycron",
+      price: "300,00",
+    },
+    resolver: yupResolver(productSchema),
+  });
 
   async function handleUserPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -79,10 +113,29 @@ export default function NewProduct() {
     setProductImages(aux);
   }
 
+  function handleGoPreview({ description, name, price }: FormData) {
+    const data = {
+      name,
+      description,
+      price: Number(price.replace(/\D/g, "")),
+      is_new: productStatus === "novo" ? true : false,
+      accept_trade: acceptTrade,
+      payment_methods: paymentMethods,
+      product_images: productImages,
+      user: {
+        avatar: user.avatar,
+        name: user.name,
+        tel: user.tel,
+      },
+    };
+    console.log(data);
+    navigation.navigate("productPreview", { product: JSON.stringify(data) });
+  }
+
   return (
     <>
-      <ScrollView px={6} py={6}>
-        <VStack pb={12}>
+      <ScrollView pt={16} px={6} py={6}>
+        <VStack pb={16}>
           <HStack justifyContent="space-between">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon
@@ -174,9 +227,35 @@ export default function NewProduct() {
           <Text fontFamily="heading" color="gray.200" fontSize="md" mt={6}>
             Sobre o produto
           </Text>
-          <Input mt={4} placeholder="Título do anúncio" />
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                mt={4}
+                placeholder="Título do anúncio"
+                value={value}
+                onChangeText={onChange}
+                error={errors.name?.message}
+              />
+            )}
+          />
 
-          <TextArea mt={4} placeholder="Descrição do produto" h={160} />
+          <Controller
+            control={control}
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <TextArea
+                mt={4}
+                placeholder="Descrição do produto"
+                h={160}
+                value={value}
+                onChangeText={onChange}
+                error={errors.description?.message}
+              />
+            )}
+          />
+
           <Box mt={4}>
             <Radio.Group
               flexDir="row"
@@ -189,12 +268,35 @@ export default function NewProduct() {
               }}
               colorScheme="blue"
             >
-              <Radio value="one">Produto novo</Radio>
-              <Radio value="two" ml={4}>
+              <Radio value="novo">Produto novo</Radio>
+              <Radio value="usado" ml={4}>
                 Produto usado
               </Radio>
             </Radio.Group>
           </Box>
+
+          <Text fontFamily="heading" fontSize="md" mt={4}>
+            Venda
+          </Text>
+          <Controller
+            control={control}
+            name="price"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                leftElement={
+                  <Text ml={4} color="gray.100" fontSize="md">
+                    R$
+                  </Text>
+                }
+                mt={4}
+                placeholder="Valor do produto"
+                keyboardType="numeric"
+                value={value}
+                onChangeText={onChange}
+                error={errors.price?.message}
+              />
+            )}
+          />
 
           <Text fontFamily="heading" fontSize="md" mt={4}>
             Aceita troca?
@@ -213,101 +315,93 @@ export default function NewProduct() {
           <Text fontFamily="heading" fontSize="md" mt={4} mb={2}>
             Meios de pagamento aceitos
           </Text>
-          <Checkbox
-            size="md"
-            my={1}
-            isChecked={acceptBoleto}
-            onChange={() => setAcceptBoleto(!acceptBoleto)}
-            value="boleto"
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            <Text fontSize="md" color="gray.200">
-              Boleto
-            </Text>
-          </Checkbox>
-          <Checkbox
-            size="md"
-            my={1}
-            value="pix"
-            isChecked={acceptPix}
-            onChange={() => setAcceptPix(!acceptPix)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            <Text fontSize="md" color="gray.200">
-              Pix
-            </Text>
-          </Checkbox>
-          <Checkbox
-            size="md"
-            my={1}
-            value="cash"
-            isChecked={acceptCash}
-            onChange={() => setAcceptCash(!acceptCash)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            <Text fontSize="md" color="gray.200">
-              Dinheiro
-            </Text>
-          </Checkbox>
-          <Checkbox
-            size="md"
-            my={1}
-            value="card"
-            isChecked={acceptCard}
-            onChange={() => setAcceptCard(!acceptCard)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            <Text fontSize="md" color="gray.200">
-              Cartão de Crédito
-            </Text>
-          </Checkbox>
-          <Checkbox
-            size="md"
-            my={1}
-            value="deposit"
-            isChecked={acceptDeposit}
-            onChange={() => setAcceptDeposit(!acceptDeposit)}
-            _checked={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-            _pressed={{
-              bg: "blue.light",
-              borderColor: "blue.light",
-            }}
-          >
-            <Text fontSize="md" color="gray.200">
-              Depósito Bancário
-            </Text>
-          </Checkbox>
+          <Checkbox.Group onChange={setPaymentMethods} value={paymentMethods}>
+            <Checkbox
+              size="md"
+              my={1}
+              value="boleto"
+              _checked={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+              _pressed={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+            >
+              <Text fontSize="md" color="gray.200">
+                Boleto
+              </Text>
+            </Checkbox>
+            <Checkbox
+              size="md"
+              my={1}
+              value="pix"
+              _checked={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+              _pressed={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+            >
+              <Text fontSize="md" color="gray.200">
+                Pix
+              </Text>
+            </Checkbox>
+            <Checkbox
+              size="md"
+              my={1}
+              value="cash"
+              _checked={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+              _pressed={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+            >
+              <Text fontSize="md" color="gray.200">
+                Dinheiro
+              </Text>
+            </Checkbox>
+            <Checkbox
+              size="md"
+              my={1}
+              value="card"
+              _checked={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+              _pressed={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+            >
+              <Text fontSize="md" color="gray.200">
+                Cartão de Crédito
+              </Text>
+            </Checkbox>
+            <Checkbox
+              size="md"
+              my={1}
+              value="deposit"
+              _checked={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+              _pressed={{
+                bg: "blue.light",
+                borderColor: "blue.light",
+              }}
+            >
+              <Text fontSize="md" color="gray.200">
+                Depósito Bancário
+              </Text>
+            </Checkbox>
+          </Checkbox.Group>
         </VStack>
       </ScrollView>
       <BottomBox>
@@ -319,6 +413,7 @@ export default function NewProduct() {
           _pressed={{
             bg: "gray.400",
           }}
+          onPress={() => navigation.goBack()}
         />
         <Button
           title="Avançar"
@@ -329,6 +424,7 @@ export default function NewProduct() {
           _pressed={{
             bg: "gray.200",
           }}
+          onPress={handleSubmit(handleGoPreview)}
         />
       </BottomBox>
     </>

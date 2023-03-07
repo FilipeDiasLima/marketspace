@@ -63,7 +63,7 @@ export default function MyProducts() {
   }, [status]);
 
   return (
-    <VStack px={6} py={6}>
+    <VStack pt={16} px={6} py={6}>
       <HStack justifyContent="space-between" alignItems="center">
         <Icon
           as={<Ionicons name="add" />}

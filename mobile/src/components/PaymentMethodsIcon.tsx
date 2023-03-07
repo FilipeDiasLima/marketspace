@@ -25,9 +25,11 @@ type Props = {
 
 export const PaymentMethodsIcon = ({ id, name }: Props) => {
   return (
-    <HStack key={id} space={1} mt={1}>
+    <HStack key={id} space={1} mt={1} alignItems="center">
       <Icon as={<Ionicons name={iconName(id)} />} color="gray.200" size="sm" />
-      <Text color="gray.200">{name}</Text>
+      <Text color="gray.200" mb={1}>
+        {name}
+      </Text>
     </HStack>
   );
 };

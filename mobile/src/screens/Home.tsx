@@ -58,7 +58,7 @@ export default function Home() {
 
   return (
     <ScrollView>
-      <VStack px={6} pt={8} pb={20}>
+      <VStack pt={16} px={6} pb={20}>
         <HStack>
           <Welcome />
           <Button
