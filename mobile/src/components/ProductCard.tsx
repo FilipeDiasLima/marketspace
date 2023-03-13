@@ -16,6 +16,7 @@ import NoImageProduct from "@assets/no-product-image.png";
 import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { BadgeStatus } from "./BadgeStatus";
 import { Dimensions } from "react-native";
+import { apiURL } from "@service/url";
 
 type Props = {
   item: ProductDTO;
@@ -30,10 +31,8 @@ export const ProductCard = ({ item }: Props) => {
     navigation.navigate("productDetails", { productId: id });
   }
 
-  console.log(process.env.API_URL);
-
   return (
-    <Pressable onPress={() => handleOpenProductDetails(item.id)}>
+    <Pressable onPress={() => handleOpenProductDetails(item.id!)}>
       <Box flexDir="column" mt={8}>
         <Box position="relative">
           <HStack
@@ -50,7 +49,7 @@ export const ProductCard = ({ item }: Props) => {
               source={
                 item.product_images[0]
                   ? {
-                      uri: `${process.env.API_URL}/images/${item.user.avatar}`,
+                      uri: `${apiURL}/images/${item.user.avatar}`,
                     }
                   : NoImageProduct
               }
@@ -64,17 +63,28 @@ export const ProductCard = ({ item }: Props) => {
             source={
               item.product_images[0]
                 ? {
-                    uri: `${process.env.API_URL}/images/${item.product_images[0].path}`,
+                    uri: `${apiURL}/images/${item.product_images[0].path}`,
                   }
                 : NoImageProduct
             }
             alt={item.name}
           />
         </Box>
-        <Text mt={1} fontSize="md" numberOfLines={1} maxW={180}>
+        <Text
+          mt={1}
+          fontSize="md"
+          numberOfLines={1}
+          maxW={WIDTH <= 425 ? 160 : 180}
+        >
           {item.name}
         </Text>
-        <Text mt={1} fontSize="lg" fontFamily="heading">
+        <Text
+          mt={1}
+          fontSize="lg"
+          fontFamily="heading"
+          numberOfLines={1}
+          maxW={WIDTH <= 425 ? 160 : 180}
+        >
           {new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",

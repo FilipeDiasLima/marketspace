@@ -11,24 +11,71 @@ import {
   Switch,
   Checkbox,
 } from "native-base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AcceptTradeBox } from "./AcceptTradeBox";
 import { Button } from "./Button";
 import { PaymentMethodsCheckbox } from "./PaymentMethodsCheckbox";
 
 type Props = {
   isOpen: boolean;
+  isNewQuery: boolean | undefined;
+  acceptTrade: boolean;
+  paymentMethods: string[];
   onClose: () => void;
+  setIsNewQuery: (value: boolean | undefined) => void;
+  setAcceptTrade: (value: boolean) => void;
+  setPaymentMethods: (value: string[]) => void;
 };
 
-export const Filter = ({ isOpen, onClose }: Props) => {
-  const [newProductFilter, setNewProductFilter] = useState(false);
-  const [usedProductFilter, setUsedProductFilter] = useState(false);
+export const Filter = ({
+  isOpen,
+  isNewQuery,
+  acceptTrade,
+  paymentMethods,
+  onClose,
+  setAcceptTrade,
+  setIsNewQuery,
+  setPaymentMethods,
+}: Props) => {
+  const [newProductFilter, setNewProductFilter] = useState(true);
+  const [usedProductFilter, setUsedProductFilter] = useState(true);
+  const [acceptTradeFilter, setAcceptTradeFilter] = useState(acceptTrade);
+  const [paymentMethodsFilter, setPaymentMethodsFilter] =
+    useState<string[]>(paymentMethods);
+  console.log(
+    "🚀 ~ file: Filter.tsx:42 ~ paymentMethodsFilter",
+    paymentMethodsFilter
+  );
 
   function resetFilters() {
     setNewProductFilter(false);
     setUsedProductFilter(false);
+    setAcceptTradeFilter(false);
   }
+
+  function handleApplyFilters() {
+    if (usedProductFilter && !newProductFilter) setIsNewQuery(false);
+    else if (newProductFilter && !usedProductFilter) setIsNewQuery(true);
+    else {
+      setIsNewQuery(undefined);
+    }
+    setAcceptTrade(acceptTradeFilter);
+    setPaymentMethods(paymentMethodsFilter);
+    onClose();
+  }
+
+  useEffect(() => {
+    if (isNewQuery === true) {
+      setNewProductFilter(true);
+      setUsedProductFilter(false);
+    } else if (isNewQuery === false) {
+      setNewProductFilter(false);
+      setUsedProductFilter(true);
+    } else {
+      setNewProductFilter(true);
+      setUsedProductFilter(true);
+    }
+  }, [, isNewQuery]);
 
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
@@ -104,9 +151,17 @@ export const Filter = ({ isOpen, onClose }: Props) => {
           </HStack>
         </Box>
 
-        <AcceptTradeBox mt={6} />
+        <AcceptTradeBox
+          mt={6}
+          acceptTrade={acceptTradeFilter}
+          setAcceptTrade={setAcceptTradeFilter}
+        />
 
-        <PaymentMethodsCheckbox mt={6} />
+        <PaymentMethodsCheckbox
+          mt={6}
+          paymentMethods={paymentMethodsFilter}
+          setPaymentMethods={setPaymentMethodsFilter}
+        />
 
         <Box w="100%" alignItems="flex-start" mt={12} mb={2}>
           <HStack space={6}>
@@ -123,6 +178,7 @@ export const Filter = ({ isOpen, onClose }: Props) => {
             <Button
               title="Aplicar filtros"
               flex={1}
+              onPress={handleApplyFilters}
               bg="gray.100"
               color="gray.700"
               _pressed={{

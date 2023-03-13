@@ -7,7 +7,9 @@ import { ProductImagesCarousel } from "@components/ProductImagesCarousel";
 import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { api } from "@service/api";
+import { apiURL } from "@service/url";
 import AppError from "@utils/AppError";
 import "intl";
 import "intl/locale-data/jsonp/pt-BR";
@@ -17,28 +19,28 @@ import {
   Heading,
   HStack,
   Icon,
-  Image,
   ScrollView,
   Text,
   useToast,
   VStack,
 } from "native-base";
-import { useEffect, useRef, useState } from "react";
-import { Dimensions, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 
 type RouteParams = {
   productId: string;
+  isMine: boolean;
 };
 
 export default function ProductDetails() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppStackNavigationRoutesProps>();
   const route = useRoute();
   const toast = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
   const [productData, setProductData] = useState<ProductDTO>({} as ProductDTO);
 
-  const { productId } = route.params as RouteParams;
+  const { productId, isMine } = route.params as RouteParams;
 
   async function fetchProductDetails() {
     setIsLoading(true);
@@ -61,6 +63,25 @@ export default function ProductDetails() {
     }
   }
 
+  async function toggleActiveStatusProduct() {
+    try {
+      await api.patch(`/products/${productData.id}`, {
+        is_active: !productData.is_active,
+      });
+      setProductData({ ...productData, is_active: !productData.is_active });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError;
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
+  }
+
   useEffect(() => {
     fetchProductDetails();
   }, [productId]);
@@ -71,7 +92,7 @@ export default function ProductDetails() {
     return (
       <>
         <ScrollView>
-          <Box px={6} pt={16}>
+          <HStack px={6} pt={16} justifyContent="space-between">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon
                 as={<AntDesign name="arrowleft" />}
@@ -79,9 +100,39 @@ export default function ProductDetails() {
                 color="gray.100"
               />
             </TouchableOpacity>
-          </Box>
+            {isMine && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("editProduct", {
+                    productId: productData.id!,
+                  })
+                }
+              >
+                <Icon
+                  as={<AntDesign name="edit" />}
+                  size="lg"
+                  color="gray.100"
+                />
+              </TouchableOpacity>
+            )}
+          </HStack>
 
           <Box mt={4}>
+            {!productData.is_active && (
+              <Box
+                position="absolute"
+                alignItems="center"
+                justifyContent="center"
+                w="100%"
+                height={300}
+                bg="gray.cardOpacity"
+                zIndex={2}
+              >
+                <Text color="gray.700" fontSize="lg" textTransform="uppercase">
+                  anúncio desativado
+                </Text>
+              </Box>
+            )}
             <ProductImagesCarousel
               name={productData.name}
               product_images={productData.product_images}
@@ -93,7 +144,7 @@ export default function ProductDetails() {
               <Avatar
                 size={10}
                 source={{
-                  uri: `${process.env.API_URL}/images/${productData.user?.avatar}`,
+                  uri: `${apiURL}/images/${productData.user?.avatar}`,
                 }}
                 mr={4}
                 borderWidth={3}
@@ -147,34 +198,81 @@ export default function ProductDetails() {
                 />
               ))}
             </VStack>
+            {isMine && (
+              <>
+                <Button
+                  mt={6}
+                  title={
+                    productData.is_active
+                      ? "Desativar anúncio"
+                      : "Reativar anúncio"
+                  }
+                  flex={1}
+                  fontSize="md"
+                  bg={productData.is_active ? "gray.100" : "blue.light"}
+                  leftIcon={
+                    <Icon
+                      as={<AntDesign name="poweroff" />}
+                      color="gray.600"
+                      size="md"
+                    />
+                  }
+                  size="md"
+                  _pressed={{
+                    bg: "gray.200",
+                  }}
+                  onPress={toggleActiveStatusProduct}
+                />
+                <Button
+                  mt={2}
+                  title="Excluir anúncio"
+                  flex={1}
+                  bg="gray.500"
+                  color="gray.200"
+                  leftIcon={
+                    <Icon
+                      as={<Ionicons name="trash-outline" />}
+                      color="gray.100"
+                      size="md"
+                    />
+                  }
+                  _pressed={{
+                    bg: "gray.400",
+                  }}
+                  onPress={() => navigation.goBack()}
+                />
+              </>
+            )}
           </VStack>
         </ScrollView>
-        <BottomBox>
-          <Text
-            fontFamily="heading"
-            fontSize="xl"
-            color="blue.100"
-            flex={1}
-            textAlign="left"
-          >
-            {new Intl.NumberFormat("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            }).format(productData.price! / 100)}
-          </Text>
-          <Button
-            title="Entrar em contato"
-            bg="blue.light"
-            leftIcon={
-              <Icon
-                as={<Ionicons name="ios-logo-whatsapp" />}
-                color="gray.600"
-                size="md"
-              />
-            }
-            flex={1}
-          />
-        </BottomBox>
+        {!isMine && (
+          <BottomBox>
+            <Text
+              fontFamily="heading"
+              fontSize="xl"
+              color="blue.100"
+              flex={1}
+              textAlign="left"
+            >
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(productData.price! / 100)}
+            </Text>
+            <Button
+              title="Entrar em contato"
+              bg="blue.light"
+              leftIcon={
+                <Icon
+                  as={<Ionicons name="ios-logo-whatsapp" />}
+                  color="gray.600"
+                  size="md"
+                />
+              }
+              flex={1}
+            />
+          </BottomBox>
+        )}
       </>
     );
   }

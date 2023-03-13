@@ -3,6 +3,8 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, TouchableOpacity } from "react-native";
 import NoImageProduct from "@assets/no-product-image.png";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { apiURL } from "@service/url";
 
 type Props = {
   product_images: [
@@ -20,7 +22,7 @@ export const ProductImagesCarousel = ({ name, product_images }: Props) => {
 
   const [slideIndex, setSlideIndex] = useState(0);
   return (
-    <>
+    <GestureHandlerRootView>
       <Carousel
         loop={false}
         ref={carouselRef}
@@ -34,7 +36,7 @@ export const ProductImagesCarousel = ({ name, product_images }: Props) => {
             source={
               product_images
                 ? {
-                    uri: `${process.env.API_URL}/images/${item.path}`,
+                    uri: `${apiURL}/images/${item.path}`,
                   }
                 : NoImageProduct
             }
@@ -57,6 +59,6 @@ export const ProductImagesCarousel = ({ name, product_images }: Props) => {
           ))}
         </HStack>
       )}
-    </>
+    </GestureHandlerRootView>
   );
 };

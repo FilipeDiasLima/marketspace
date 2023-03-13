@@ -16,6 +16,7 @@ import NoImageProduct from "@assets/no-product-image.png";
 import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { BadgeStatus } from "./BadgeStatus";
 import { Dimensions } from "react-native";
+import { apiURL } from "@service/url";
 
 type Props = {
   item: ProductDTO;
@@ -27,13 +28,11 @@ export const MyProductCard = ({ item }: Props) => {
   const navigation = useNavigation<AppStackNavigationRoutesProps>();
 
   function handleOpenProductDetails(id: string) {
-    navigation.navigate("productDetails", { productId: id });
+    navigation.navigate("productDetails", { productId: id, isMine: true });
   }
 
-  console.log(process.env.API_URL);
-
   return (
-    <Pressable onPress={() => handleOpenProductDetails(item.id)}>
+    <Pressable onPress={() => handleOpenProductDetails(item.id!)}>
       <Box flexDir="column" mt={8}>
         <Box position="relative">
           {!item.is_active && (
@@ -73,7 +72,7 @@ export const MyProductCard = ({ item }: Props) => {
             source={
               item.product_images[0]
                 ? {
-                    uri: `${process.env.API_URL}/images/${item.product_images[0].path}`,
+                    uri: `${apiURL}/images/${item.product_images[0].path}`,
                   }
                 : NoImageProduct
             }

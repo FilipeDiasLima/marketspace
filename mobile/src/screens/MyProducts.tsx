@@ -1,7 +1,7 @@
 import { MyProductCard } from "@components/MyProductCard";
 import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppStackNavigationRoutesProps } from "@routes/app.routes";
 import { api } from "@service/api";
 import AppError from "@utils/AppError";
@@ -16,7 +16,7 @@ import {
   useToast,
   VStack,
 } from "native-base";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 
 export default function MyProducts() {
@@ -27,7 +27,7 @@ export default function MyProducts() {
   const [productsList, setProductsList] = useState<ProductDTO[]>([]);
   const [products, setProducts] = useState<ProductDTO[]>([]);
 
-  const fetchAds = async () => {
+  const fetchMyProducts = async () => {
     try {
       const { data } = await api.get("/users/products");
       setProductsList(data);
@@ -42,13 +42,14 @@ export default function MyProducts() {
         placement: "top",
         bgColor: "red.500",
       });
-    } finally {
     }
   };
 
-  useEffect(() => {
-    fetchAds();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyProducts();
+    }, [])
+  );
 
   useEffect(() => {
     if (status.toLowerCase() === "ativos") {
@@ -80,7 +81,7 @@ export default function MyProducts() {
       </HStack>
 
       <HStack justifyContent="space-between" alignItems="center" mt={6}>
-        <Text>9 anúncios</Text>
+        <Text>{products.length} anúncios</Text>
         <Box w={120}>
           <Menu
             w={120}

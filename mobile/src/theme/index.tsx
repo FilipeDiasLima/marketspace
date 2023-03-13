@@ -18,6 +18,7 @@ export const Theme = extendTheme({
       500: "#D9D8DA",
       600: "#EDECEE",
       700: "#F7F7F8",
+      cardOpacity: "#1a181ba5",
     },
   },
   fonts: {

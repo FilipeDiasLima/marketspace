@@ -62,6 +62,10 @@ export class ProductsController {
         : typeof request.query.payment_methods === "string" &&
           JSON.parse(request.query.payment_methods);
 
+    console.log(
+      "🚀 ~ file: ProductsController.ts:60 ~ ProductsController ~ index ~ payment_methods",
+      payment_methods
+    );
     const products = await prisma.products.findMany({
       where: {
         user_id: {
@@ -109,6 +113,10 @@ export class ProductsController {
         },
       },
     });
+    console.log(
+      "🚀 ~ file: ProductsController.ts:116 ~ ProductsController ~ index ~ products",
+      products
+    );
 
     return response.json(products);
   }

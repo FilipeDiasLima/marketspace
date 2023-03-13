@@ -1,24 +1,6 @@
 import axios from "axios";
-console.log(process.env.API_URL);
+import { apiURL } from "./url";
+
 export const api = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: apiURL,
 });
-
-api.interceptors.request.use(
-  (config) => {
-    // console.log(config);
-    return config;
-  },
-  (error) => error
-);
-
-api.interceptors.response.use(
-  (success) => {
-    // console.log(success);
-    return success;
-  },
-  (error) => {
-    console.log(error);
-    return error;
-  }
-);

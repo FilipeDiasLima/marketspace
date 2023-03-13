@@ -4,10 +4,9 @@ import { TMP_FOLDER, UPLOADS_FOLDER } from "../configs/upload";
 
 export class DiskStorage {
   async saveFile(file: string) {
-
     await fs.promises.rename(
       path.resolve(TMP_FOLDER, file),
-      path.resolve(UPLOADS_FOLDER, file),
+      path.resolve(UPLOADS_FOLDER, file)
     );
 
     return file;

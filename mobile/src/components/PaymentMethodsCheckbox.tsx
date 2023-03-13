@@ -1,105 +1,98 @@
 import { Box, IBoxProps, Checkbox, Text } from "native-base";
 import { useState } from "react";
 
-type Props = IBoxProps & {};
+type Props = IBoxProps & {
+  paymentMethods: string[];
+  setPaymentMethods: (value: string[]) => void;
+};
 
-export const PaymentMethodsCheckbox = ({ ...rest }: Props) => {
-  const [acceptBoleto, setAcceptBoleto] = useState(false);
-  const [acceptPix, setAcceptPix] = useState(false);
-  const [acceptCash, setAcceptCash] = useState(false);
-  const [acceptCard, setAcceptCard] = useState(false);
-  const [acceptDeposit, setAcceptDeposit] = useState(false);
-
+export const PaymentMethodsCheckbox = ({
+  paymentMethods,
+  setPaymentMethods,
+  ...rest
+}: Props) => {
   return (
     <Box w="100%" alignItems="flex-start" {...rest}>
       <Text fontFamily="heading" fontSize="md" mb={2}>
         Meios de pagamento aceitos
       </Text>
-      <Checkbox
-        my={1}
-        size="sm"
-        isChecked={acceptBoleto}
-        onChange={() => setAcceptBoleto(!acceptBoleto)}
-        value="boleto"
-        _checked={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-        _pressed={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-      >
-        Boleto
-      </Checkbox>
-      <Checkbox
-        my={1}
-        size="sm"
-        value="pix"
-        isChecked={acceptPix}
-        onChange={() => setAcceptPix(!acceptPix)}
-        _checked={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-        _pressed={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-      >
-        Pix
-      </Checkbox>
-      <Checkbox
-        my={1}
-        size="sm"
-        value="cash"
-        isChecked={acceptCash}
-        onChange={() => setAcceptCash(!acceptCash)}
-        _checked={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-        _pressed={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-      >
-        Dinheiro
-      </Checkbox>
-      <Checkbox
-        my={1}
-        size="sm"
-        value="card"
-        isChecked={acceptCard}
-        onChange={() => setAcceptCard(!acceptCard)}
-        _checked={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-        _pressed={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-      >
-        Cartão de Crédito
-      </Checkbox>
-      <Checkbox
-        my={1}
-        size="sm"
-        value="deposit"
-        isChecked={acceptDeposit}
-        onChange={() => setAcceptDeposit(!acceptDeposit)}
-        _checked={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-        _pressed={{
-          bg: "blue.light",
-          borderColor: "blue.light",
-        }}
-      >
-        Depósito Bancário
-      </Checkbox>
+      <Checkbox.Group onChange={setPaymentMethods} value={paymentMethods}>
+        <Checkbox
+          my={1}
+          size="sm"
+          value="boleto"
+          _checked={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+          _pressed={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+        >
+          Boleto
+        </Checkbox>
+        <Checkbox
+          my={1}
+          size="sm"
+          value="pix"
+          _checked={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+          _pressed={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+        >
+          Pix
+        </Checkbox>
+        <Checkbox
+          my={1}
+          size="sm"
+          value="cash"
+          _checked={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+          _pressed={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+        >
+          Dinheiro
+        </Checkbox>
+        <Checkbox
+          my={1}
+          size="sm"
+          value="card"
+          _checked={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+          _pressed={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+        >
+          Cartão de Crédito
+        </Checkbox>
+        <Checkbox
+          my={1}
+          size="sm"
+          value="deposit"
+          _checked={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+          _pressed={{
+            bg: "blue.light",
+            borderColor: "blue.light",
+          }}
+        >
+          Depósito Bancário
+        </Checkbox>
+      </Checkbox.Group>
     </Box>
   );
 };

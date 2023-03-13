@@ -8,13 +8,13 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
+import EditProduct from "@screens/EditProduct";
 import Home from "@screens/Home";
 import Logout from "@screens/Logout";
 import MyProducts from "@screens/MyProducts";
 import NewProduct from "@screens/NewProduct";
 import ProductDetails from "@screens/ProductDetails";
 import ProductPreview from "@screens/ProductPreview";
-import Profile from "@screens/Profile";
 import { useTheme } from "native-base";
 import { Platform } from "react-native";
 
@@ -27,8 +27,9 @@ type TabRoutes = {
 
 type AppRoutes = {
   home: undefined;
-  productDetails: { productId: string };
-  productPreview: { product: string };
+  productDetails: { productId: string; isMine?: boolean };
+  productPreview: { product: string; edit?: boolean };
+  editProduct: { productId: string };
   newProduct: undefined;
 };
 
@@ -81,15 +82,6 @@ function AppTabs() {
         }}
       />
       <Tab.Screen
-        name="profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" color={color} size={iconSize} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="logout"
         component={Logout}
         options={{
@@ -109,6 +101,7 @@ export function AppRoutes() {
       <Stack.Screen name="productDetails" component={ProductDetails} />
       <Stack.Screen name="newProduct" component={NewProduct} />
       <Stack.Screen name="productPreview" component={ProductPreview} />
+      <Stack.Screen name="editProduct" component={EditProduct} />
     </Stack.Navigator>
   );
 }

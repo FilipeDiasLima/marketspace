@@ -2,7 +2,6 @@ import { BottomBox } from "@components/BottomBox";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { TextArea } from "@components/TextArea";
-import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@hooks/useAuth";
@@ -49,29 +48,19 @@ export default function NewProduct() {
   const { user } = useAuth();
 
   const [productImages, setProductImages] = useState<any[]>([]);
-  const [productStatus, setProductStatus] = useState("usado");
-  const [acceptTrade, setAcceptTrade] = useState(true);
-  const [paymentMethods, setPaymentMethods] = useState<string[]>([
-    "pix",
-    "cash",
-  ]);
+  const [productStatus, setProductStatus] = useState("");
+  const [acceptTrade, setAcceptTrade] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
 
   const {
     control,
     handleSubmit,
-    watch,
-    setValue,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: {
-      description: "dciehwbciu wdiouch owid cldsn klcj hwljdncoiw dhco",
-      name: "Teclado Keycron",
-      price: "300,00",
-    },
     resolver: yupResolver(productSchema),
   });
 
-  async function handleUserPhotoSelect() {
+  async function handleProductPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
@@ -128,7 +117,7 @@ export default function NewProduct() {
         tel: user.tel,
       },
     };
-    console.log(data);
+
     navigation.navigate("productPreview", { product: JSON.stringify(data) });
   }
 
@@ -170,8 +159,9 @@ export default function NewProduct() {
                   layout={Layout}
                   entering={FadeIn}
                   exiting={FadeOut}
+                  key={index}
                 >
-                  <Box position="relative" key={index}>
+                  <Box position="relative">
                     <Image
                       source={{ uri: image.uri }}
                       bg="gray.500"
@@ -203,7 +193,7 @@ export default function NewProduct() {
                   entering={FadeIn}
                   exiting={FadeOut}
                 >
-                  <TouchableOpacity onPress={handleUserPhotoSelect}>
+                  <TouchableOpacity onPress={handleProductPhotoSelect}>
                     <Box
                       bg="gray.500"
                       rounded="lg"

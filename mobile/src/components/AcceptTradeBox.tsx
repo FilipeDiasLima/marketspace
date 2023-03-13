@@ -1,11 +1,16 @@
 import { Box, IBoxProps, Switch, Text } from "native-base";
 import { useState } from "react";
 
-type Props = IBoxProps & {};
+type Props = IBoxProps & {
+  acceptTrade: boolean;
+  setAcceptTrade: (value: boolean) => void;
+};
 
-export const AcceptTradeBox = ({ ...rest }: Props) => {
-  const [acceptTrade, setAcceptTrade] = useState(false);
-
+export const AcceptTradeBox = ({
+  acceptTrade,
+  setAcceptTrade,
+  ...rest
+}: Props) => {
   return (
     <Box w="100%" alignItems="flex-start" {...rest}>
       <Text fontFamily="heading" fontSize="md" mb={2}>

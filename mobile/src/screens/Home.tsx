@@ -1,13 +1,18 @@
 import { Button } from "@components/Button";
 import { Filter } from "@components/Filter";
 import { Input } from "@components/Input";
+import { LoadingChildren } from "@components/LoadingChildren";
 import { ProductCard } from "@components/ProductCard";
 import { TitleBox } from "@components/TitleBox";
 import { Welcome } from "@components/Welcome";
 import { ProductDTO } from "@dtos/Product";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { AppStackNavigationRoutesProps } from "@routes/app.routes";
+import { useAuth } from "@hooks/useAuth";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import {
+  AppStackNavigationRoutesProps,
+  AppTabNavigationRoutesProps,
+} from "@routes/app.routes";
 import { api } from "@service/api";
 import AppError from "@utils/AppError";
 import {
@@ -16,6 +21,7 @@ import {
   Divider,
   HStack,
   Icon,
+  Pressable,
   ScrollView,
   SimpleGrid,
   Text,
@@ -23,20 +29,34 @@ import {
   useToast,
   VStack,
 } from "native-base";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export default function Home() {
   const toast = useToast();
   const navigationStack = useNavigation<AppStackNavigationRoutesProps>();
+  const navigationTabs = useNavigation<AppTabNavigationRoutesProps>();
 
   const { isOpen, onOpen, onClose } = useDisclose();
 
-  const [isLoadingAds, setIsLoadingAds] = useState(false);
+  const [productName, setProductName] = useState("");
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [acceptTrade, setAcceptTrade] = useState(false);
+  const [isNewQuery, setIsNewQuery] = useState<boolean | undefined>(undefined);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
+  const [productsActives, setProductsActives] = useState(0);
   const [adsList, setAdsList] = useState<ProductDTO[]>([]);
 
-  const fetchAds = async () => {
+  const fetchProducts = async () => {
+    setIsLoadingProducts(true);
     try {
-      const { data } = await api.get("/products");
+      const { data } = await api.get("/products", {
+        params: {
+          query: productName || undefined,
+          is_new: isNewQuery,
+          accept_trade: acceptTrade || undefined,
+          payment_methods: JSON.stringify(paymentMethods),
+        },
+      });
       setAdsList(data);
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -49,12 +69,31 @@ export default function Home() {
         bgColor: "red.500",
       });
     } finally {
+      setIsLoadingProducts(false);
     }
   };
 
-  useEffect(() => {
-    fetchAds();
-  }, []);
+  async function loadUserProducts() {
+    try {
+      const { data } = await api.get("/users/products");
+      const aux = data.filter((product: ProductDTO) => product.is_active);
+      setProductsActives(aux.length);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [, isNewQuery, acceptTrade, paymentMethods])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      loadUserProducts();
+    }, [])
+  );
 
   return (
     <ScrollView>
@@ -77,41 +116,44 @@ export default function Home() {
         </HStack>
 
         <TitleBox mt={10} title="Seus produtos anunciados para venda" />
-        <Box
-          flexDirection="row"
-          justifyContent="space-around"
-          alignItems="center"
-          bg="blue.card"
-          rounded="lg"
-          px={2}
-          py={4}
-          mt={2}
-        >
-          <Icon as={<AntDesign name="tagso" />} size="xl" color="blue.100" />
-          <VStack>
-            <Text fontSize="lg" fontFamily="heading">
-              4
-            </Text>
-            <Text>anúncios ativos</Text>
-          </VStack>
-          <NativeBaseButton
-            variant="ghost"
-            _pressed={{
-              bg: "none",
-            }}
-            rightIcon={
-              <Icon
-                as={<Ionicons name="arrow-forward" />}
-                size="sm"
-                color="blue.100"
-              />
-            }
+        <Pressable onPress={() => navigationTabs.navigate("myProducts")}>
+          <Box
+            flexDirection="row"
+            justifyContent="space-around"
+            alignItems="center"
+            bg="blue.card"
+            rounded="lg"
+            px={2}
+            py={4}
+            mt={2}
           >
-            <Text color="blue.100" fontFamily="heading">
-              Meus anúncios
-            </Text>
-          </NativeBaseButton>
-        </Box>
+            <Icon as={<AntDesign name="tagso" />} size="xl" color="blue.100" />
+            <VStack>
+              <Text fontSize="lg" fontFamily="heading">
+                {productsActives}
+              </Text>
+              <Text>anúncios ativos</Text>
+            </VStack>
+            <NativeBaseButton
+              variant="ghost"
+              _pressed={{
+                bg: "none",
+              }}
+              onPress={() => navigationTabs.navigate("myProducts")}
+              rightIcon={
+                <Icon
+                  as={<Ionicons name="arrow-forward" />}
+                  size="sm"
+                  color="blue.100"
+                />
+              }
+            >
+              <Text color="blue.100" fontFamily="heading">
+                Meus anúncios
+              </Text>
+            </NativeBaseButton>
+          </Box>
+        </Pressable>
 
         <TitleBox mt={10} title="Compre produtos variados" />
         <Box
@@ -124,6 +166,8 @@ export default function Home() {
         >
           <Box flex={1}>
             <Input
+              value={productName}
+              onChangeText={setProductName}
               placeholder="Buscar anúncio"
               _focus={{
                 borderWidth: 0,
@@ -136,6 +180,7 @@ export default function Home() {
             p={2}
             rounded="lg"
             _pressed={{ bg: "blue.card" }}
+            onPress={fetchProducts}
           >
             <Icon as={<Feather name="search" />} color="gray.200" size="md" />
           </NativeBaseButton>
@@ -157,13 +202,26 @@ export default function Home() {
           </NativeBaseButton>
         </Box>
 
-        <SimpleGrid columns={2} w="100%" spacingX={5}>
-          {adsList.map((item) => (
-            <ProductCard key={item.id} item={item} />
-          ))}
-        </SimpleGrid>
+        {isLoadingProducts ? (
+          <LoadingChildren />
+        ) : (
+          <SimpleGrid columns={2} w="100%" spacingX={5}>
+            {adsList.map((item) => (
+              <ProductCard key={item.id} item={item} />
+            ))}
+          </SimpleGrid>
+        )}
       </VStack>
-      <Filter isOpen={isOpen} onClose={onClose} />
+      <Filter
+        isOpen={isOpen}
+        onClose={onClose}
+        isNewQuery={isNewQuery}
+        acceptTrade={acceptTrade}
+        paymentMethods={paymentMethods}
+        setIsNewQuery={(value) => setIsNewQuery(value)}
+        setAcceptTrade={(value) => setAcceptTrade(value)}
+        setPaymentMethods={(value) => setPaymentMethods(value)}
+      />
     </ScrollView>
   );
 }
