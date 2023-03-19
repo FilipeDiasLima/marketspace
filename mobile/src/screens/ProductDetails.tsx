@@ -82,6 +82,23 @@ export default function ProductDetails() {
     }
   }
 
+  async function handleDeleteProduct() {
+    try {
+      await api.delete(`/products/${productData.id}`);
+      navigation.goBack();
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError;
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
+  }
+
   useEffect(() => {
     fetchProductDetails();
   }, [productId]);
@@ -239,7 +256,7 @@ export default function ProductDetails() {
                   _pressed={{
                     bg: "gray.400",
                   }}
-                  onPress={() => navigation.goBack()}
+                  onPress={handleDeleteProduct}
                 />
               </>
             )}

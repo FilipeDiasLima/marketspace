@@ -24,11 +24,32 @@ type Props = {
 };
 
 export const PaymentMethodsIcon = ({ id, name }: Props) => {
+  let methodName = name;
+  console.log(name);
+  switch (name) {
+    case "pix":
+      methodName = "Pix";
+      break;
+    case "deposit":
+      methodName = "Depósito Bancário";
+      break;
+    case "cash":
+      methodName = "Dinheiro";
+      break;
+    case "card":
+      methodName = "Cartão de Crédito";
+      break;
+    case "boleto":
+      methodName = "Boleto";
+      break;
+    default:
+      break;
+  }
   return (
     <HStack key={id} space={1} mt={1} alignItems="center">
       <Icon as={<Ionicons name={iconName(id)} />} color="gray.200" size="sm" />
       <Text color="gray.200" mb={1}>
-        {name}
+        {methodName}
       </Text>
     </HStack>
   );

@@ -42,10 +42,6 @@ export const Filter = ({
   const [acceptTradeFilter, setAcceptTradeFilter] = useState(acceptTrade);
   const [paymentMethodsFilter, setPaymentMethodsFilter] =
     useState<string[]>(paymentMethods);
-  console.log(
-    "🚀 ~ file: Filter.tsx:42 ~ paymentMethodsFilter",
-    paymentMethodsFilter
-  );
 
   function resetFilters() {
     setNewProductFilter(false);
